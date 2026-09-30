@@ -6,13 +6,13 @@
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "npx prisma db push --skip-generate && node dist/index.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "postinstall": "npx prisma generate && npx prisma db push --skip-generate"
+    "postinstall": "npx prisma generate"
   },
   "keywords": [],
   "author": "",
