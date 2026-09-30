@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Rol {
+  CLIENTE
+  ADMINISTRADOR
+}
+
+model Usuario {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  email       String   @unique
+  password    String
+  rol         Rol      @default(CLIENTE)
+  telefono    String?
+  direccion   String?
+  creadoEn    DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+  citas       Cita[]
+}
+
+model Servicio {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  duracion    Int      // duración en minutos
+  precio      Decimal  @db.Decimal(10, 2)
+  activo      Boolean  @default(true)
+  creadoEn    DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+  citas       Cita[]
+}
+
+model Cita {
+  id          Int      @id @default(autoincrement())
+  fecha       DateTime
+  estado      String   @default("pendiente") // pendiente, confirmada, cancelada, completada
+  notas       String?
+  usuarioId   Int
+  servicioId  Int
+  usuario     Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  servicio    Servicio @relation(fields: [servicioId], references: [id], onDelete: Cascade)
+  creadoEn    DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  @@index([usuarioId])
+  @@index([servicioId])
+  @@index([fecha])
+}
